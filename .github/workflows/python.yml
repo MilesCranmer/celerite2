@@ -24,8 +24,7 @@ jobs:
         session:
           - "core"
           - "jax"
-          - "pymc3"
-          # - "pymc"
+          - "pymc"
           - "pymc_jax"
 
     steps:
