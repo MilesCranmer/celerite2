@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 __all__ = ["GaussianProcess", "ConditionalDistribution"]
+from jax import lax
 from jax import numpy as np
 
-from jax import lax
 from celerite2.core import BaseConditionalDistribution, BaseGaussianProcess
 from celerite2.jax import ops
 

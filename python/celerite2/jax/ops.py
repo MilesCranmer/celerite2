@@ -17,20 +17,19 @@ __all__ = [
     "general_matmul_lower",
     "general_matmul_upper",
 ]
+import importlib
+import importlib.resources as resources
 import json
-from collections import OrderedDict
 from functools import partial
 from itertools import chain
-import importlib
 
 import numpy as np
-import importlib.resources as resources
-from jax import core, lax, ffi
+from jax import core, ffi, lax
 from jax import numpy as jnp
+from jax._src.core import Primitive  # Public Primitive was removed in JAX 0.8
 from jax.core import ShapedArray
 from jax.interpreters import ad, mlir, xla
 from jax.lib import xla_client
-from jax._src.core import Primitive  # Public Primitive was removed in JAX 0.8
 
 xla_ops = importlib.import_module("celerite2.jax.xla_ops")
 

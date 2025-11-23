@@ -11,11 +11,11 @@ __all__ = [
     "general_matmul_upper",
 ]
 
+import importlib.resources as resources
 import json
 from itertools import chain
 
 import numpy as np
-import importlib.resources as resources
 import pytensor
 import pytensor.tensor as pt
 from pytensor.graph import basic, op
@@ -221,4 +221,6 @@ def _jax_funcify_celerite(op, node, **kwargs):
     try:
         return mapping[op.name]
     except KeyError:
-        raise NotImplementedError(f"No JAX conversion registered for {op.name}")
+        raise NotImplementedError(
+            f"No JAX conversion registered for {op.name}"
+        )

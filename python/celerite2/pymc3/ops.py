@@ -11,11 +11,11 @@ __all__ = [
     "general_matmul_upper",
 ]
 
+import importlib.resources as resources
 import json
 from itertools import chain
 
 import numpy as np
-import importlib.resources as resources
 import theano
 import theano.tensor as tt
 from theano.graph import basic, op
