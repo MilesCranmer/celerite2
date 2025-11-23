@@ -21,6 +21,7 @@ import json
 from collections import OrderedDict
 from functools import partial
 from itertools import chain
+import importlib
 
 import numpy as np
 import importlib.resources as resources
@@ -31,7 +32,7 @@ from jax.interpreters import ad, mlir, xla
 from jax.lib import xla_client
 from jax._src.core import Primitive  # Public Primitive was removed in JAX 0.8
 
-from celerite2.jax import xla_ops
+xla_ops = importlib.import_module("celerite2.jax.xla_ops")
 
 
 def factor(t, c, a, U, V):

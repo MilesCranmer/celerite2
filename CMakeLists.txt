@@ -24,7 +24,7 @@ install(TARGETS backprop LIBRARY DESTINATION ${SKBUILD_PROJECT_NAME})
 option(BUILD_JAX "Build JAX extension (requires jaxlib headers)" ON)
 if(BUILD_JAX)
     execute_process(
-        COMMAND ${Python3_EXECUTABLE} -c "import sys; import jaxlib; sys.stdout.write(jaxlib.get_include())"
+        COMMAND ${Python3_EXECUTABLE} -c "import sys, pathlib; import jaxlib; path = pathlib.Path(jaxlib.__file__).parent / 'include'; sys.stdout.write(str(path) if path.exists() else '')"
         OUTPUT_VARIABLE JAX_INCLUDE
         RESULT_VARIABLE JAXLIB_RES
         OUTPUT_STRIP_TRAILING_WHITESPACE)

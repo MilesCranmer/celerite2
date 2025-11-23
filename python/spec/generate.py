@@ -5,7 +5,6 @@ import json
 import os
 from pathlib import Path
 
-import pkg_resources
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 base = Path(os.path.dirname(os.path.abspath(__file__)))
@@ -15,9 +14,7 @@ env = Environment(
     autoescape=select_autoescape(["cpp"]),
 )
 
-with open(
-    pkg_resources.resource_filename("celerite2", "definitions.json"), "r"
-) as f:
+with open(base.parent / "celerite2" / "definitions.json", "r") as f:
     data = json.load(f)
 
 for n in range(len(data)):

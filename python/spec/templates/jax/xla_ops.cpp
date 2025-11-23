@@ -50,6 +50,10 @@ ffi::Error {{mod.name|capitalize}}Impl(
     ffi::ResultBuffer<ffi::DataType::F64> {{arg.name}}{% if not loop.last %},{% endif %}
 {%- endfor %}
 ) {
+  {# Dimension aliases for readability #}
+  {% for dim in mod.dimensions %}
+  const auto {{dim.name}} = dim{{dim.coords[1]}}({{mod.inputs[dim.coords[0]].name}});
+  {% endfor %}
   {# Minimal shape checks - rely on driver.hpp order helper #}
   {% for arg in mod.inputs %}
   {%- if arg.shape|length == 1 %}
@@ -76,14 +80,14 @@ ffi::Error {{mod.name|capitalize}}Impl(
     {%- elif arg.shape|length == 2 and arg.shape[1] == "J" %}
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, J); \
     {%- else %}
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, dim1({{arg.name}})); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, {{arg.shape[1]}}); \
     {%- endif %}
     {%- endfor %}
     {%- for arg in mod.extra_outputs %}
     {%- if arg.shape|length == 3 and arg.shape[1] == "J" and arg.shape[2] == "J" %}
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, (SIZE * SIZE), order<(SIZE * SIZE)>::value>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, J * J); \
     {%- else %}
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, flat_cols({{arg.name}})); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, {{ '*'.join(arg.shape[1:]) }}); \
     {%- endif %}
     {%- endfor %}
     {%- for arg in mod.outputs + mod.extra_outputs %}
@@ -117,6 +121,9 @@ ffi::Error {{mod.name}}_revImpl(
     ffi::ResultBuffer<ffi::DataType::F64> {{arg.name}}{% if not loop.last %},{% endif %}
 {%- endfor %}
 ) {
+  {% for dim in mod.dimensions %}
+  const auto {{dim.name}} = dim{{dim.coords[1]}}({{mod.inputs[dim.coords[0]].name}});
+  {% endfor %}
   {# Minimal shape checks #}
   {% for arg in mod.rev_inputs %}
   {%- if arg.shape|length == 1 %}
@@ -133,8 +140,12 @@ ffi::Error {{mod.name}}_revImpl(
     Eigen::Map<const Eigen::VectorXd> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, 1); \
     {%- elif arg.shape|length == 2 and arg.shape[1] == "J" %}
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, J); \
+    {%- elif arg.shape|length == 3 and arg.shape[1] == "J" and arg.shape[2] == "J" %}
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, (SIZE * SIZE), order<(SIZE * SIZE)>::value>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, J * J); \
+    {%- elif arg.shape|length == 3 %}
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, {{ '*'.join(arg.shape[1:]) }}); \
     {%- else %}
-    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, dim1({{arg.name}})); \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, {{arg.shape[1]}}); \
     {%- endif %}
     {%- endfor %}
     {%- for arg in mod.rev_outputs %}
@@ -143,7 +154,7 @@ ffi::Error {{mod.name}}_revImpl(
     {%- elif arg.shape|length == 2 and arg.shape[1] == "J" %}
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, J); \
     {%- else %}
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, dim1({{arg.name}})); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, {{arg.shape[1]}}); \
     {%- endif %}
     {%- endfor %}
     {%- for arg in mod.rev_outputs %}

@@ -35,6 +35,10 @@ class GaussianProcess(BaseGaussianProcess):
             self._t, self._c, self._a, self._U, self._V
         )
         self._log_det = np.sum(np.log(self._d))
+        if np.any(self._d <= 0) or not np.isfinite(self._log_det):
+            self._log_det = -np.inf
+            self._norm = np.inf
+            return
         self._norm = -0.5 * (self._log_det + self._size * np.log(2 * np.pi))
 
     def _check_sorted(self, t):
