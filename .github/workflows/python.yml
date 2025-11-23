@@ -47,7 +47,7 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m nox --non-interactive --error-on-missing-interpreter \
+          python -m nox --non-interactive \
             --session ${{ matrix.session }}-${{ matrix.python-version }}
 
   tests-pymc:
@@ -75,5 +75,5 @@ jobs:
 
       - name: Run tests
         run: |
-          python -m nox --non-interactive --error-on-missing-interpreter \
+          python -m nox --non-interactive \
             --session pymc_mamba-3.11
