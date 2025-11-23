@@ -6,6 +6,7 @@ project(
 
 set(PYBIND11_NEWPYTHON ON)
 find_package(pybind11 CONFIG REQUIRED)
+find_package(Python3 COMPONENTS Interpreter REQUIRED)
 
 include_directories(
     "c++/include"
@@ -20,6 +21,20 @@ pybind11_add_module(backprop "python/celerite2/backprop.cpp")
 target_compile_features(backprop PUBLIC cxx_std_14)
 install(TARGETS backprop LIBRARY DESTINATION ${SKBUILD_PROJECT_NAME})
 
-pybind11_add_module(xla_ops "python/celerite2/jax/xla_ops.cpp")
-target_compile_features(xla_ops PUBLIC cxx_std_14)
-install(TARGETS xla_ops LIBRARY DESTINATION "${SKBUILD_PROJECT_NAME}/jax")
+option(BUILD_JAX "Build JAX extension (requires jaxlib headers)" ON)
+if(BUILD_JAX)
+    execute_process(
+        COMMAND ${Python3_EXECUTABLE} -c "import sys; import jaxlib; sys.stdout.write(jaxlib.get_include())"
+        OUTPUT_VARIABLE JAX_INCLUDE
+        RESULT_VARIABLE JAXLIB_RES
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    if(JAXLIB_RES EQUAL 0 AND NOT "${JAX_INCLUDE}" STREQUAL "")
+        message(STATUS "Building JAX extension with jaxlib include: ${JAX_INCLUDE}")
+        pybind11_add_module(xla_ops "python/celerite2/jax/xla_ops.cpp")
+        target_compile_features(xla_ops PUBLIC cxx_std_17)
+        target_include_directories(xla_ops PRIVATE "${JAX_INCLUDE}")
+        install(TARGETS xla_ops LIBRARY DESTINATION "${SKBUILD_PROJECT_NAME}/jax")
+    else()
+        message(STATUS "Skipping JAX extension (jaxlib not found)")
+    endif()
+endif()
