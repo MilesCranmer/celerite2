@@ -25,14 +25,14 @@ def jax(session):
 
 @nox.session(python=ALL_PYTHON_VS)
 def pymc(session):
-    session.install(".[test,pymc]")
+    session.install(".[test,pymc,jax]")
     _session_run(session, "python/test/pymc")
 
 
 @nox.session(python=ALL_PYTHON_VS, venv_backend="mamba")
 def pymc_mamba(session):
     session.conda_install("pymc", channel="conda-forge")
-    session.install(".[test,pymc]")
+    session.install(".[test,pymc,jax]")
     _session_run(session, "python/test/pymc")
 
 
