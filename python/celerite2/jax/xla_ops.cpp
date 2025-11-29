@@ -9,7 +9,6 @@
 #include <string>
 
 #include "xla/ffi/api/ffi.h"
-#include "xla/ffi/api/api.h"
 
 #include "../driver.hpp"
 
