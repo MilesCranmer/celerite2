@@ -237,8 +237,16 @@ ffi::Error Solve_lowerImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> W_(W.typed_data(), N, J); \
-    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, dim1(Y)); \
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    if (nrhs == 1) { \
+      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, nrhs); \
+    } \
+    if (nrhs == 1) { \
+      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    } \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -395,8 +403,16 @@ ffi::Error Solve_upperImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> W_(W.typed_data(), N, J); \
-    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, dim1(Y)); \
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    if (nrhs == 1) { \
+      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, nrhs); \
+    } \
+    if (nrhs == 1) { \
+      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    } \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -553,8 +569,16 @@ ffi::Error Matmul_lowerImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> V_(V.typed_data(), N, J); \
-    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, dim1(Y)); \
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    if (nrhs == 1) { \
+      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, nrhs); \
+    } \
+    if (nrhs == 1) { \
+      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    } \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -711,8 +735,16 @@ ffi::Error Matmul_upperImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> V_(V.typed_data(), N, J); \
-    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, dim1(Y)); \
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    if (nrhs == 1) { \
+      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, nrhs); \
+    } \
+    if (nrhs == 1) { \
+      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    } \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -875,8 +907,16 @@ ffi::Error General_matmul_lowerImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> V_(V.typed_data(), M, J); \
-    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), M, dim1(Y)); \
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    if (nrhs == 1) { \
+      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), M, 1); \
+    } else { \
+      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), M, nrhs); \
+    } \
+    if (nrhs == 1) { \
+      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    } \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), M, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -949,8 +989,16 @@ ffi::Error General_matmul_upperImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> V_(V.typed_data(), M, J); \
-    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), M, dim1(Y)); \
-    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    if (nrhs == 1) { \
+      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), M, 1); \
+    } else { \
+      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), M, nrhs); \
+    } \
+    if (nrhs == 1) { \
+      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
+    } else { \
+      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
+    } \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), M, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \

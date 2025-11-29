@@ -45,6 +45,15 @@ ffi::Error {{mod.name|capitalize}}Impl(
   {% for dim in mod.dimensions %}
   const auto {{dim.name}} = dim{{dim.coords[1]}}({{mod.inputs[dim.coords[0]].name}});
   {% endfor %}
+  {%- set nrhs_arg = None -%}
+  {%- for a in mod.inputs + mod.outputs + mod.extra_outputs -%}
+    {%- if a.shape|length >= 2 and a.shape[-1] == "nrhs" and nrhs_arg is none -%}
+      {%- set nrhs_arg = a -%}
+    {%- endif -%}
+  {%- endfor -%}
+  {%- if nrhs_arg is not none %}
+  const auto nrhs = dim<{{ nrhs_arg.shape|length - 1 }}>({{ nrhs_arg.name }});
+  {%- endif %}
   {# Minimal shape checks - rely on driver.hpp order helper #}
   {% for arg in mod.inputs %}
   {%- if arg.shape|length == 1 %}
@@ -61,6 +70,12 @@ ffi::Error {{mod.name|capitalize}}Impl(
     Eigen::Map<const Eigen::VectorXd> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, 1); \
     {%- elif arg.shape|length == 2 and arg.shape[1] == "J" %}
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, J); \
+    {%- elif arg.shape|length == 2 and arg.shape[1] == "nrhs" %}
+    if (nrhs == 1) { \
+      Eigen::Map<const Eigen::VectorXd> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, 1); \
+    } else { \
+      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, nrhs); \
+    } \
     {%- else %}
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, dim1({{arg.name}})); \
     {%- endif %}
@@ -70,6 +85,12 @@ ffi::Error {{mod.name|capitalize}}Impl(
     Eigen::Map<Eigen::VectorXd> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, 1); \
     {%- elif arg.shape|length == 2 and arg.shape[1] == "J" %}
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, J); \
+    {%- elif arg.shape|length == 2 and arg.shape[1] == "nrhs" %}
+    if (nrhs == 1) { \
+      Eigen::Map<Eigen::VectorXd> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, 1); \
+    } else { \
+      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, nrhs); \
+    } \
     {%- else %}
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, {{arg.shape[1]}}); \
     {%- endif %}
