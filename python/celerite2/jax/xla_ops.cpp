@@ -62,8 +62,8 @@ ffi::Error FactorImpl(
   if (dim<0>(V) != N || dim<1>(V) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::VectorXd> a_(a.typed_data(), N, 1); \
@@ -145,8 +145,8 @@ ffi::Error factor_revImpl(
   if (dim0(bW) != N || dim1(bW) != J) return shape_error("factor_rev shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::VectorXd> a_(a.typed_data(), N, 1); \
@@ -231,8 +231,8 @@ ffi::Error Solve_lowerImpl(
   if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
@@ -315,8 +315,8 @@ ffi::Error solve_lower_revImpl(
   if (dim0(bZ) != N || dim1(bZ) != nrhs) return shape_error("solve_lower_rev shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
@@ -397,8 +397,8 @@ ffi::Error Solve_upperImpl(
   if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
@@ -481,8 +481,8 @@ ffi::Error solve_upper_revImpl(
   if (dim0(bZ) != N || dim1(bZ) != nrhs) return shape_error("solve_upper_rev shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
@@ -563,8 +563,8 @@ ffi::Error Matmul_lowerImpl(
   if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
@@ -647,8 +647,8 @@ ffi::Error matmul_lower_revImpl(
   if (dim0(bZ) != N || dim1(bZ) != nrhs) return shape_error("matmul_lower_rev shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
@@ -729,8 +729,8 @@ ffi::Error Matmul_upperImpl(
   if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
@@ -813,8 +813,8 @@ ffi::Error matmul_upper_revImpl(
   if (dim0(bZ) != N || dim1(bZ) != nrhs) return shape_error("matmul_upper_rev shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t_(t.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
@@ -900,8 +900,8 @@ ffi::Error General_matmul_lowerImpl(
   if (dim<0>(Y) != M || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t1_(t1.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> t2_(t2.typed_data(), M, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
@@ -982,8 +982,8 @@ ffi::Error General_matmul_upperImpl(
   if (dim<0>(Y) != M || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     Eigen::Map<const Eigen::VectorXd> t1_(t1.typed_data(), N, 1); \
     Eigen::Map<const Eigen::VectorXd> t2_(t2.typed_data(), M, 1); \
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \

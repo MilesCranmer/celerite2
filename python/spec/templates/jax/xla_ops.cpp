@@ -63,8 +63,8 @@ ffi::Error {{mod.name|capitalize}}Impl(
   {%- endif %}
   {% endfor %}
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     {%- for arg in mod.inputs %}
     {%- if arg.shape|length == 1 %}
     Eigen::Map<const Eigen::VectorXd> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, 1); \
@@ -149,8 +149,8 @@ ffi::Error {{mod.name}}_revImpl(
   {%- endif %}
   {% endfor %}
 
-#define FIXED_SIZE_MAP(SIZE)                                                        \
-  {                                                                                 \
+#define FIXED_SIZE_MAP(SIZE) \
+  { \
     {%- for arg in mod.rev_inputs %}
     {%- if arg.shape|length == 1 %}
     Eigen::Map<const Eigen::VectorXd> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, 1); \
