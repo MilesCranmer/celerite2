@@ -31,10 +31,6 @@ inline Eigen::Index flat_cols(const Buffer& buf) {
   return cols;
 }
 
-inline ffi::Error shape_error(const char* msg) {
-  return ffi::Error(ffi::ErrorCode::kInvalidArgument, std::string(msg));
-}
-
 // === AUTO-GENERATED KERNELS ===
 {% for mod in spec %}
 
@@ -56,9 +52,9 @@ ffi::Error {{mod.name|capitalize}}Impl(
   {# Minimal shape checks - rely on driver.hpp order helper #}
   {% for arg in mod.inputs %}
   {%- if arg.shape|length == 1 %}
-  if (dim0({{arg.name}}) != {{arg.shape[0]}}) return shape_error("{{mod.name}} shape mismatch");
+  if (dim0({{arg.name}}) != {{arg.shape[0]}}) return ffi::Error::InvalidArgument("{{mod.name}} shape mismatch");
   {%- elif arg.shape|length == 2 %}
-  if (dim0({{arg.name}}) != {{arg.shape[0]}} || dim1({{arg.name}}) != {{arg.shape[1]}}) return shape_error("{{mod.name}} shape mismatch");
+  if (dim0({{arg.name}}) != {{arg.shape[0]}} || dim1({{arg.name}}) != {{arg.shape[1]}}) return ffi::Error::InvalidArgument("{{mod.name}} shape mismatch");
   {%- endif %}
   {% endfor %}
 
@@ -92,7 +88,11 @@ ffi::Error {{mod.name|capitalize}}Impl(
     {%- for arg in mod.outputs + mod.extra_outputs %}
     {{arg.name}}_.setZero(); \
     {%- endfor %}
-    celerite2::core::{{mod.name}}({%- for arg in mod.inputs %} {{arg.name}}_{% if not loop.last or mod.outputs or mod.extra_outputs %},{% endif %}{%- endfor %}{%- if mod.outputs or mod.extra_outputs %} {% endif %}{%- for arg in mod.outputs + mod.extra_outputs %}{{arg.name}}_{% if not loop.last %},{% endif %}{%- endfor %}); \
+    try { \
+        celerite2::core::{{mod.name}}({%- for arg in mod.inputs %} {{arg.name}}_{% if not loop.last or mod.outputs or mod.extra_outputs %},{% endif %}{%- endfor %}{%- if mod.outputs or mod.extra_outputs %} {% endif %}{%- for arg in mod.outputs + mod.extra_outputs %}{{arg.name}}_{% if not loop.last %},{% endif %}{%- endfor %}); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_{{ "FEW" if mod.has_rev else "MOST" }}
 #undef FIXED_SIZE_MAP
@@ -159,7 +159,11 @@ ffi::Error {{mod.name}}_revImpl(
     {%- for arg in mod.rev_outputs %}
     {{arg.name}}_.setZero(); \
     {%- endfor %}
-    celerite2::core::{{mod.name}}_rev({%- for arg in mod.rev_inputs %} {{arg.name}}_{% if not loop.last or mod.rev_outputs %},{% endif %}{%- endfor %}{%- if mod.rev_outputs %} {% endif %}{%- for arg in mod.rev_outputs %}{{arg.name}}_{% if not loop.last %},{% endif %}{%- endfor %}); \
+    try { \
+        celerite2::core::{{mod.name}}_rev({%- for arg in mod.rev_inputs %} {{arg.name}}_{% if not loop.last or mod.rev_outputs %},{% endif %}{%- endfor %}{%- if mod.rev_outputs %} {% endif %}{%- for arg in mod.rev_outputs %}{{arg.name}}_{% if not loop.last %},{% endif %}{%- endfor %}); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP

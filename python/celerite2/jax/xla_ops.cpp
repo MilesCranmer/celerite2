@@ -34,10 +34,6 @@ inline Eigen::Index flat_cols(const Buffer& buf) {
   return cols;
 }
 
-inline ffi::Error shape_error(const char* msg) {
-  return ffi::Error(ffi::ErrorCode::kInvalidArgument, std::string(msg));
-}
-
 // === AUTO-GENERATED KERNELS ===
 
 
@@ -59,15 +55,15 @@ ffi::Error FactorImpl(
 
 
 
-  if (dim0(t) != N) return shape_error("factor shape mismatch");
+  if (dim0(t) != N) return ffi::Error::InvalidArgument("factor shape mismatch");
 
-  if (dim0(c) != J) return shape_error("factor shape mismatch");
+  if (dim0(c) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
 
-  if (dim0(a) != N) return shape_error("factor shape mismatch");
+  if (dim0(a) != N) return ffi::Error::InvalidArgument("factor shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return shape_error("factor shape mismatch");
+  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
 
-  if (dim0(V) != N || dim1(V) != J) return shape_error("factor shape mismatch");
+  if (dim0(V) != N || dim1(V) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -83,7 +79,11 @@ ffi::Error FactorImpl(
     d_.setZero(); \
     W_.setZero(); \
     S_.setZero(); \
-    celerite2::core::factor( t_, c_, a_, U_, V_, d_,W_,S_); \
+    try { \
+        celerite2::core::factor( t_, c_, a_, U_, V_, d_,W_,S_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -171,7 +171,11 @@ ffi::Error factor_revImpl(
     ba_.setZero(); \
     bU_.setZero(); \
     bV_.setZero(); \
-    celerite2::core::factor_rev( t_, c_, a_, U_, V_, d_, W_, S_, bd_, bW_, bt_,bc_,ba_,bU_,bV_); \
+    try { \
+        celerite2::core::factor_rev( t_, c_, a_, U_, V_, d_, W_, S_, bd_, bW_, bt_,bc_,ba_,bU_,bV_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -220,15 +224,15 @@ ffi::Error Solve_lowerImpl(
 
 
 
-  if (dim0(t) != N) return shape_error("solve_lower shape mismatch");
+  if (dim0(t) != N) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
-  if (dim0(c) != J) return shape_error("solve_lower shape mismatch");
+  if (dim0(c) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return shape_error("solve_lower shape mismatch");
+  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
-  if (dim0(W) != N || dim1(W) != J) return shape_error("solve_lower shape mismatch");
+  if (dim0(W) != N || dim1(W) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
-  if (dim0(Y) != N || dim1(Y) != nrhs) return shape_error("solve_lower shape mismatch");
+  if (dim0(Y) != N || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -242,7 +246,11 @@ ffi::Error Solve_lowerImpl(
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
-    celerite2::core::solve_lower( t_, c_, U_, W_, Y_, Z_,F_); \
+    try { \
+        celerite2::core::solve_lower( t_, c_, U_, W_, Y_, Z_,F_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -323,7 +331,11 @@ ffi::Error solve_lower_revImpl(
     bU_.setZero(); \
     bW_.setZero(); \
     bY_.setZero(); \
-    celerite2::core::solve_lower_rev( t_, c_, U_, W_, Y_, Z_, F_, bZ_, bt_,bc_,bU_,bW_,bY_); \
+    try { \
+        celerite2::core::solve_lower_rev( t_, c_, U_, W_, Y_, Z_, F_, bZ_, bt_,bc_,bU_,bW_,bY_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -370,15 +382,15 @@ ffi::Error Solve_upperImpl(
 
 
 
-  if (dim0(t) != N) return shape_error("solve_upper shape mismatch");
+  if (dim0(t) != N) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
-  if (dim0(c) != J) return shape_error("solve_upper shape mismatch");
+  if (dim0(c) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return shape_error("solve_upper shape mismatch");
+  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
-  if (dim0(W) != N || dim1(W) != J) return shape_error("solve_upper shape mismatch");
+  if (dim0(W) != N || dim1(W) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
-  if (dim0(Y) != N || dim1(Y) != nrhs) return shape_error("solve_upper shape mismatch");
+  if (dim0(Y) != N || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -392,7 +404,11 @@ ffi::Error Solve_upperImpl(
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
-    celerite2::core::solve_upper( t_, c_, U_, W_, Y_, Z_,F_); \
+    try { \
+        celerite2::core::solve_upper( t_, c_, U_, W_, Y_, Z_,F_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -473,7 +489,11 @@ ffi::Error solve_upper_revImpl(
     bU_.setZero(); \
     bW_.setZero(); \
     bY_.setZero(); \
-    celerite2::core::solve_upper_rev( t_, c_, U_, W_, Y_, Z_, F_, bZ_, bt_,bc_,bU_,bW_,bY_); \
+    try { \
+        celerite2::core::solve_upper_rev( t_, c_, U_, W_, Y_, Z_, F_, bZ_, bt_,bc_,bU_,bW_,bY_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -520,15 +540,15 @@ ffi::Error Matmul_lowerImpl(
 
 
 
-  if (dim0(t) != N) return shape_error("matmul_lower shape mismatch");
+  if (dim0(t) != N) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
-  if (dim0(c) != J) return shape_error("matmul_lower shape mismatch");
+  if (dim0(c) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return shape_error("matmul_lower shape mismatch");
+  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
-  if (dim0(V) != N || dim1(V) != J) return shape_error("matmul_lower shape mismatch");
+  if (dim0(V) != N || dim1(V) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
-  if (dim0(Y) != N || dim1(Y) != nrhs) return shape_error("matmul_lower shape mismatch");
+  if (dim0(Y) != N || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -542,7 +562,11 @@ ffi::Error Matmul_lowerImpl(
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
-    celerite2::core::matmul_lower( t_, c_, U_, V_, Y_, Z_,F_); \
+    try { \
+        celerite2::core::matmul_lower( t_, c_, U_, V_, Y_, Z_,F_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -623,7 +647,11 @@ ffi::Error matmul_lower_revImpl(
     bU_.setZero(); \
     bV_.setZero(); \
     bY_.setZero(); \
-    celerite2::core::matmul_lower_rev( t_, c_, U_, V_, Y_, Z_, F_, bZ_, bt_,bc_,bU_,bV_,bY_); \
+    try { \
+        celerite2::core::matmul_lower_rev( t_, c_, U_, V_, Y_, Z_, F_, bZ_, bt_,bc_,bU_,bV_,bY_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -670,15 +698,15 @@ ffi::Error Matmul_upperImpl(
 
 
 
-  if (dim0(t) != N) return shape_error("matmul_upper shape mismatch");
+  if (dim0(t) != N) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
-  if (dim0(c) != J) return shape_error("matmul_upper shape mismatch");
+  if (dim0(c) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return shape_error("matmul_upper shape mismatch");
+  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
-  if (dim0(V) != N || dim1(V) != J) return shape_error("matmul_upper shape mismatch");
+  if (dim0(V) != N || dim1(V) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
-  if (dim0(Y) != N || dim1(Y) != nrhs) return shape_error("matmul_upper shape mismatch");
+  if (dim0(Y) != N || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -692,7 +720,11 @@ ffi::Error Matmul_upperImpl(
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
-    celerite2::core::matmul_upper( t_, c_, U_, V_, Y_, Z_,F_); \
+    try { \
+        celerite2::core::matmul_upper( t_, c_, U_, V_, Y_, Z_,F_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -773,7 +805,11 @@ ffi::Error matmul_upper_revImpl(
     bU_.setZero(); \
     bV_.setZero(); \
     bY_.setZero(); \
-    celerite2::core::matmul_upper_rev( t_, c_, U_, V_, Y_, Z_, F_, bZ_, bt_,bc_,bU_,bV_,bY_); \
+    try { \
+        celerite2::core::matmul_upper_rev( t_, c_, U_, V_, Y_, Z_, F_, bZ_, bt_,bc_,bU_,bV_,bY_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_FEW
 #undef FIXED_SIZE_MAP
@@ -823,17 +859,17 @@ ffi::Error General_matmul_lowerImpl(
 
 
 
-  if (dim0(t1) != N) return shape_error("general_matmul_lower shape mismatch");
+  if (dim0(t1) != N) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(t2) != M) return shape_error("general_matmul_lower shape mismatch");
+  if (dim0(t2) != M) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(c) != J) return shape_error("general_matmul_lower shape mismatch");
+  if (dim0(c) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return shape_error("general_matmul_lower shape mismatch");
+  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(V) != M || dim1(V) != J) return shape_error("general_matmul_lower shape mismatch");
+  if (dim0(V) != M || dim1(V) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(Y) != M || dim1(Y) != nrhs) return shape_error("general_matmul_lower shape mismatch");
+  if (dim0(Y) != M || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -848,7 +884,11 @@ ffi::Error General_matmul_lowerImpl(
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), M, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
-    celerite2::core::general_matmul_lower( t1_, t2_, c_, U_, V_, Y_, Z_,F_); \
+    try { \
+        celerite2::core::general_matmul_lower( t1_, t2_, c_, U_, V_, Y_, Z_,F_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_MOST
 #undef FIXED_SIZE_MAP
@@ -893,17 +933,17 @@ ffi::Error General_matmul_upperImpl(
 
 
 
-  if (dim0(t1) != N) return shape_error("general_matmul_upper shape mismatch");
+  if (dim0(t1) != N) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(t2) != M) return shape_error("general_matmul_upper shape mismatch");
+  if (dim0(t2) != M) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(c) != J) return shape_error("general_matmul_upper shape mismatch");
+  if (dim0(c) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return shape_error("general_matmul_upper shape mismatch");
+  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(V) != M || dim1(V) != J) return shape_error("general_matmul_upper shape mismatch");
+  if (dim0(V) != M || dim1(V) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(Y) != M || dim1(Y) != nrhs) return shape_error("general_matmul_upper shape mismatch");
+  if (dim0(Y) != M || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -918,7 +958,11 @@ ffi::Error General_matmul_upperImpl(
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), M, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
-    celerite2::core::general_matmul_upper( t1_, t2_, c_, U_, V_, Y_, Z_,F_); \
+    try { \
+        celerite2::core::general_matmul_upper( t1_, t2_, c_, U_, V_, Y_, Z_,F_); \
+    } catch (const std::exception& e) { \
+        return ffi::Error::Internal(e.what()); \
+    } \
   }
   UNWRAP_CASES_MOST
 #undef FIXED_SIZE_MAP
