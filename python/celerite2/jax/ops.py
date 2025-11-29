@@ -26,7 +26,7 @@ from itertools import chain
 import numpy as np
 from jax import core, ffi, lax
 from jax import numpy as jnp
-from jax._src.core import Primitive  # Public Primitive was removed in JAX 0.8
+from jax.extend.core import Primitive
 from jax.core import ShapedArray
 from jax.interpreters import ad, mlir, xla
 from jax.lib import xla_client
