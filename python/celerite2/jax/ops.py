@@ -26,8 +26,8 @@ from itertools import chain
 import numpy as np
 from jax import core, ffi, lax
 from jax import numpy as jnp
-from jax.extend.core import Primitive
 from jax.core import ShapedArray
+from jax.extend.core import Primitive
 from jax.interpreters import ad, mlir, xla
 from jax.lib import xla_client
 
