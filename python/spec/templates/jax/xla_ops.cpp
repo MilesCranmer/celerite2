@@ -14,13 +14,9 @@ namespace ffi = xla::ffi;
 using namespace celerite2::driver;
 
 // Helpers
-template <typename Buffer>
-inline Eigen::Index dim0(const Buffer& buf) {
-  return static_cast<Eigen::Index>(buf.dimensions()[0]);
-}
-template <typename Buffer>
-inline Eigen::Index dim1(const Buffer& buf) {
-  return static_cast<Eigen::Index>(buf.dimensions()[1]);
+template <int Axis, typename Buffer>
+inline Eigen::Index dim(const Buffer& buf) {
+  return static_cast<Eigen::Index>(buf.dimensions()[Axis]);
 }
 template <typename Buffer>
 inline Eigen::Index flat_cols(const Buffer& buf) {
@@ -52,9 +48,9 @@ ffi::Error {{mod.name|capitalize}}Impl(
   {# Minimal shape checks - rely on driver.hpp order helper #}
   {% for arg in mod.inputs %}
   {%- if arg.shape|length == 1 %}
-  if (dim0({{arg.name}}) != {{arg.shape[0]}}) return ffi::Error::InvalidArgument("{{mod.name}} shape mismatch");
+  if (dim<0>({{arg.name}}) != {{arg.shape[0]}}) return ffi::Error::InvalidArgument("{{mod.name}} shape mismatch");
   {%- elif arg.shape|length == 2 %}
-  if (dim0({{arg.name}}) != {{arg.shape[0]}} || dim1({{arg.name}}) != {{arg.shape[1]}}) return ffi::Error::InvalidArgument("{{mod.name}} shape mismatch");
+  if (dim<0>({{arg.name}}) != {{arg.shape[0]}} || dim<1>({{arg.name}}) != {{arg.shape[1]}}) return ffi::Error::InvalidArgument("{{mod.name}} shape mismatch");
   {%- endif %}
   {% endfor %}
 

@@ -17,13 +17,9 @@ namespace ffi = xla::ffi;
 using namespace celerite2::driver;
 
 // Helpers
-template <typename Buffer>
-inline Eigen::Index dim0(const Buffer& buf) {
-  return static_cast<Eigen::Index>(buf.dimensions()[0]);
-}
-template <typename Buffer>
-inline Eigen::Index dim1(const Buffer& buf) {
-  return static_cast<Eigen::Index>(buf.dimensions()[1]);
+template <int Axis, typename Buffer>
+inline Eigen::Index dim(const Buffer& buf) {
+  return static_cast<Eigen::Index>(buf.dimensions()[Axis]);
 }
 template <typename Buffer>
 inline Eigen::Index flat_cols(const Buffer& buf) {
@@ -55,15 +51,15 @@ ffi::Error FactorImpl(
 
 
 
-  if (dim0(t) != N) return ffi::Error::InvalidArgument("factor shape mismatch");
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("factor shape mismatch");
 
-  if (dim0(c) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
 
-  if (dim0(a) != N) return ffi::Error::InvalidArgument("factor shape mismatch");
+  if (dim<0>(a) != N) return ffi::Error::InvalidArgument("factor shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
 
-  if (dim0(V) != N || dim1(V) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
+  if (dim<0>(V) != N || dim<1>(V) != J) return ffi::Error::InvalidArgument("factor shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -224,15 +220,15 @@ ffi::Error Solve_lowerImpl(
 
 
 
-  if (dim0(t) != N) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
-  if (dim0(c) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
-  if (dim0(W) != N || dim1(W) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
+  if (dim<0>(W) != N || dim<1>(W) != J) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
-  if (dim0(Y) != N || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
+  if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("solve_lower shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -382,15 +378,15 @@ ffi::Error Solve_upperImpl(
 
 
 
-  if (dim0(t) != N) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
-  if (dim0(c) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
-  if (dim0(W) != N || dim1(W) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
+  if (dim<0>(W) != N || dim<1>(W) != J) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
-  if (dim0(Y) != N || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
+  if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("solve_upper shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -540,15 +536,15 @@ ffi::Error Matmul_lowerImpl(
 
 
 
-  if (dim0(t) != N) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
-  if (dim0(c) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
-  if (dim0(V) != N || dim1(V) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
+  if (dim<0>(V) != N || dim<1>(V) != J) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
-  if (dim0(Y) != N || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
+  if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_lower shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -698,15 +694,15 @@ ffi::Error Matmul_upperImpl(
 
 
 
-  if (dim0(t) != N) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
-  if (dim0(c) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
-  if (dim0(V) != N || dim1(V) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
+  if (dim<0>(V) != N || dim<1>(V) != J) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
-  if (dim0(Y) != N || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
+  if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_upper shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -859,17 +855,17 @@ ffi::Error General_matmul_lowerImpl(
 
 
 
-  if (dim0(t1) != N) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
+  if (dim<0>(t1) != N) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(t2) != M) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
+  if (dim<0>(t2) != M) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(c) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(V) != M || dim1(V) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
+  if (dim<0>(V) != M || dim<1>(V) != J) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
-  if (dim0(Y) != M || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
+  if (dim<0>(Y) != M || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("general_matmul_lower shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
@@ -933,17 +929,17 @@ ffi::Error General_matmul_upperImpl(
 
 
 
-  if (dim0(t1) != N) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
+  if (dim<0>(t1) != N) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(t2) != M) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
+  if (dim<0>(t2) != M) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(c) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(U) != N || dim1(U) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(V) != M || dim1(V) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
+  if (dim<0>(V) != M || dim<1>(V) != J) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
-  if (dim0(Y) != M || dim1(Y) != nrhs) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
+  if (dim<0>(Y) != M || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("general_matmul_upper shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE)                                                        \
