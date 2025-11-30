@@ -45,9 +45,9 @@ ffi::Error FactorImpl(
 ) {
 
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
 
 
@@ -119,30 +119,30 @@ ffi::Error factor_revImpl(
     ffi::ResultBuffer<ffi::DataType::F64> bV
 ) {
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
-
-
-
-  if (dim0(t) != N) return shape_error("factor_rev shape mismatch");
-
-  if (dim0(c) != J) return shape_error("factor_rev shape mismatch");
-
-  if (dim0(a) != N) return shape_error("factor_rev shape mismatch");
-
-  if (dim0(U) != N || dim1(U) != J) return shape_error("factor_rev shape mismatch");
-
-  if (dim0(V) != N || dim1(V) != J) return shape_error("factor_rev shape mismatch");
-
-  if (dim0(d) != N) return shape_error("factor_rev shape mismatch");
-
-  if (dim0(W) != N || dim1(W) != J) return shape_error("factor_rev shape mismatch");
+  const auto J = dim<0>(c);
 
 
-  if (dim0(bd) != N) return shape_error("factor_rev shape mismatch");
 
-  if (dim0(bW) != N || dim1(bW) != J) return shape_error("factor_rev shape mismatch");
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
+
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
+
+  if (dim<0>(a) != N) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
+
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
+
+  if (dim<0>(V) != N || dim<1>(V) != J) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
+
+  if (dim<0>(d) != N) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
+
+  if (dim<0>(W) != N || dim<1>(W) != J) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
+
+
+  if (dim<0>(bd) != N) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
+
+  if (dim<0>(bW) != N || dim<1>(bW) != J) return ffi::Error::InvalidArgument("factor_rev shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE) \
@@ -212,11 +212,11 @@ ffi::Error Solve_lowerImpl(
 ) {
 
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
+  const auto nrhs = dim<1>(Y);
 
 
 
@@ -237,16 +237,8 @@ ffi::Error Solve_lowerImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> W_(W.typed_data(), N, J); \
-    if (nrhs == 1) { \
-      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, nrhs); \
-    } \
-    if (nrhs == 1) { \
-      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
-    } \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, dim<1>(Y)); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -291,28 +283,28 @@ ffi::Error solve_lower_revImpl(
     ffi::ResultBuffer<ffi::DataType::F64> bY
 ) {
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
-
-
-
-  if (dim0(t) != N) return shape_error("solve_lower_rev shape mismatch");
-
-  if (dim0(c) != J) return shape_error("solve_lower_rev shape mismatch");
-
-  if (dim0(U) != N || dim1(U) != J) return shape_error("solve_lower_rev shape mismatch");
-
-  if (dim0(W) != N || dim1(W) != J) return shape_error("solve_lower_rev shape mismatch");
-
-  if (dim0(Y) != N || dim1(Y) != nrhs) return shape_error("solve_lower_rev shape mismatch");
-
-  if (dim0(Z) != N || dim1(Z) != nrhs) return shape_error("solve_lower_rev shape mismatch");
+  const auto nrhs = dim<1>(Y);
 
 
-  if (dim0(bZ) != N || dim1(bZ) != nrhs) return shape_error("solve_lower_rev shape mismatch");
+
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("solve_lower_rev shape mismatch");
+
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("solve_lower_rev shape mismatch");
+
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("solve_lower_rev shape mismatch");
+
+  if (dim<0>(W) != N || dim<1>(W) != J) return ffi::Error::InvalidArgument("solve_lower_rev shape mismatch");
+
+  if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("solve_lower_rev shape mismatch");
+
+  if (dim<0>(Z) != N || dim<1>(Z) != nrhs) return ffi::Error::InvalidArgument("solve_lower_rev shape mismatch");
+
+
+  if (dim<0>(bZ) != N || dim<1>(bZ) != nrhs) return ffi::Error::InvalidArgument("solve_lower_rev shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE) \
@@ -378,11 +370,11 @@ ffi::Error Solve_upperImpl(
 ) {
 
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
+  const auto nrhs = dim<1>(Y);
 
 
 
@@ -403,16 +395,8 @@ ffi::Error Solve_upperImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> W_(W.typed_data(), N, J); \
-    if (nrhs == 1) { \
-      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, nrhs); \
-    } \
-    if (nrhs == 1) { \
-      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
-    } \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, dim<1>(Y)); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -457,28 +441,28 @@ ffi::Error solve_upper_revImpl(
     ffi::ResultBuffer<ffi::DataType::F64> bY
 ) {
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
-
-
-
-  if (dim0(t) != N) return shape_error("solve_upper_rev shape mismatch");
-
-  if (dim0(c) != J) return shape_error("solve_upper_rev shape mismatch");
-
-  if (dim0(U) != N || dim1(U) != J) return shape_error("solve_upper_rev shape mismatch");
-
-  if (dim0(W) != N || dim1(W) != J) return shape_error("solve_upper_rev shape mismatch");
-
-  if (dim0(Y) != N || dim1(Y) != nrhs) return shape_error("solve_upper_rev shape mismatch");
-
-  if (dim0(Z) != N || dim1(Z) != nrhs) return shape_error("solve_upper_rev shape mismatch");
+  const auto nrhs = dim<1>(Y);
 
 
-  if (dim0(bZ) != N || dim1(bZ) != nrhs) return shape_error("solve_upper_rev shape mismatch");
+
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("solve_upper_rev shape mismatch");
+
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("solve_upper_rev shape mismatch");
+
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("solve_upper_rev shape mismatch");
+
+  if (dim<0>(W) != N || dim<1>(W) != J) return ffi::Error::InvalidArgument("solve_upper_rev shape mismatch");
+
+  if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("solve_upper_rev shape mismatch");
+
+  if (dim<0>(Z) != N || dim<1>(Z) != nrhs) return ffi::Error::InvalidArgument("solve_upper_rev shape mismatch");
+
+
+  if (dim<0>(bZ) != N || dim<1>(bZ) != nrhs) return ffi::Error::InvalidArgument("solve_upper_rev shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE) \
@@ -544,11 +528,11 @@ ffi::Error Matmul_lowerImpl(
 ) {
 
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
+  const auto nrhs = dim<1>(Y);
 
 
 
@@ -569,16 +553,8 @@ ffi::Error Matmul_lowerImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> V_(V.typed_data(), N, J); \
-    if (nrhs == 1) { \
-      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, nrhs); \
-    } \
-    if (nrhs == 1) { \
-      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
-    } \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, dim<1>(Y)); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -623,28 +599,28 @@ ffi::Error matmul_lower_revImpl(
     ffi::ResultBuffer<ffi::DataType::F64> bY
 ) {
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
-
-
-
-  if (dim0(t) != N) return shape_error("matmul_lower_rev shape mismatch");
-
-  if (dim0(c) != J) return shape_error("matmul_lower_rev shape mismatch");
-
-  if (dim0(U) != N || dim1(U) != J) return shape_error("matmul_lower_rev shape mismatch");
-
-  if (dim0(V) != N || dim1(V) != J) return shape_error("matmul_lower_rev shape mismatch");
-
-  if (dim0(Y) != N || dim1(Y) != nrhs) return shape_error("matmul_lower_rev shape mismatch");
-
-  if (dim0(Z) != N || dim1(Z) != nrhs) return shape_error("matmul_lower_rev shape mismatch");
+  const auto nrhs = dim<1>(Y);
 
 
-  if (dim0(bZ) != N || dim1(bZ) != nrhs) return shape_error("matmul_lower_rev shape mismatch");
+
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("matmul_lower_rev shape mismatch");
+
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("matmul_lower_rev shape mismatch");
+
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("matmul_lower_rev shape mismatch");
+
+  if (dim<0>(V) != N || dim<1>(V) != J) return ffi::Error::InvalidArgument("matmul_lower_rev shape mismatch");
+
+  if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_lower_rev shape mismatch");
+
+  if (dim<0>(Z) != N || dim<1>(Z) != nrhs) return ffi::Error::InvalidArgument("matmul_lower_rev shape mismatch");
+
+
+  if (dim<0>(bZ) != N || dim<1>(bZ) != nrhs) return ffi::Error::InvalidArgument("matmul_lower_rev shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE) \
@@ -710,11 +686,11 @@ ffi::Error Matmul_upperImpl(
 ) {
 
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
+  const auto nrhs = dim<1>(Y);
 
 
 
@@ -735,16 +711,8 @@ ffi::Error Matmul_upperImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> V_(V.typed_data(), N, J); \
-    if (nrhs == 1) { \
-      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, nrhs); \
-    } \
-    if (nrhs == 1) { \
-      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
-    } \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), N, dim<1>(Y)); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), N, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -789,28 +757,28 @@ ffi::Error matmul_upper_revImpl(
     ffi::ResultBuffer<ffi::DataType::F64> bY
 ) {
 
-  const auto N = dim0(t);
+  const auto N = dim<0>(t);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
-
-
-
-  if (dim0(t) != N) return shape_error("matmul_upper_rev shape mismatch");
-
-  if (dim0(c) != J) return shape_error("matmul_upper_rev shape mismatch");
-
-  if (dim0(U) != N || dim1(U) != J) return shape_error("matmul_upper_rev shape mismatch");
-
-  if (dim0(V) != N || dim1(V) != J) return shape_error("matmul_upper_rev shape mismatch");
-
-  if (dim0(Y) != N || dim1(Y) != nrhs) return shape_error("matmul_upper_rev shape mismatch");
-
-  if (dim0(Z) != N || dim1(Z) != nrhs) return shape_error("matmul_upper_rev shape mismatch");
+  const auto nrhs = dim<1>(Y);
 
 
-  if (dim0(bZ) != N || dim1(bZ) != nrhs) return shape_error("matmul_upper_rev shape mismatch");
+
+  if (dim<0>(t) != N) return ffi::Error::InvalidArgument("matmul_upper_rev shape mismatch");
+
+  if (dim<0>(c) != J) return ffi::Error::InvalidArgument("matmul_upper_rev shape mismatch");
+
+  if (dim<0>(U) != N || dim<1>(U) != J) return ffi::Error::InvalidArgument("matmul_upper_rev shape mismatch");
+
+  if (dim<0>(V) != N || dim<1>(V) != J) return ffi::Error::InvalidArgument("matmul_upper_rev shape mismatch");
+
+  if (dim<0>(Y) != N || dim<1>(Y) != nrhs) return ffi::Error::InvalidArgument("matmul_upper_rev shape mismatch");
+
+  if (dim<0>(Z) != N || dim<1>(Z) != nrhs) return ffi::Error::InvalidArgument("matmul_upper_rev shape mismatch");
+
+
+  if (dim<0>(bZ) != N || dim<1>(bZ) != nrhs) return ffi::Error::InvalidArgument("matmul_upper_rev shape mismatch");
 
 
 #define FIXED_SIZE_MAP(SIZE) \
@@ -877,13 +845,13 @@ ffi::Error General_matmul_lowerImpl(
 ) {
 
 
-  const auto N = dim0(t1);
+  const auto N = dim<0>(t1);
 
-  const auto M = dim0(t2);
+  const auto M = dim<0>(t2);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
+  const auto nrhs = dim<1>(Y);
 
 
 
@@ -907,16 +875,8 @@ ffi::Error General_matmul_lowerImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> V_(V.typed_data(), M, J); \
-    if (nrhs == 1) { \
-      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), M, 1); \
-    } else { \
-      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), M, nrhs); \
-    } \
-    if (nrhs == 1) { \
-      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
-    } \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), M, dim<1>(Y)); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), M, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \
@@ -959,13 +919,13 @@ ffi::Error General_matmul_upperImpl(
 ) {
 
 
-  const auto N = dim0(t1);
+  const auto N = dim<0>(t1);
 
-  const auto M = dim0(t2);
+  const auto M = dim<0>(t2);
 
-  const auto J = dim0(c);
+  const auto J = dim<0>(c);
 
-  const auto nrhs = dim1(Y);
+  const auto nrhs = dim<1>(Y);
 
 
 
@@ -989,16 +949,8 @@ ffi::Error General_matmul_upperImpl(
     Eigen::Map<const Eigen::VectorXd> c_(c.typed_data(), J, 1); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> U_(U.typed_data(), N, J); \
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> V_(V.typed_data(), M, J); \
-    if (nrhs == 1) { \
-      Eigen::Map<const Eigen::VectorXd> Y_(Y.typed_data(), M, 1); \
-    } else { \
-      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), M, nrhs); \
-    } \
-    if (nrhs == 1) { \
-      Eigen::Map<Eigen::VectorXd> Z_(Z->typed_data(), N, 1); \
-    } else { \
-      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
-    } \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Y_(Y.typed_data(), M, dim<1>(Y)); \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> Z_(Z->typed_data(), N, nrhs); \
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> F_(F->typed_data(), M, J*nrhs); \
     Z_.setZero(); \
     F_.setZero(); \

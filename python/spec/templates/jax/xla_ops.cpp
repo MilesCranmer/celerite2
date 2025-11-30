@@ -43,7 +43,7 @@ ffi::Error {{mod.name|capitalize}}Impl(
 ) {
   {# Dimension aliases for readability #}
   {% for dim in mod.dimensions %}
-  const auto {{dim.name}} = dim{{dim.coords[1]}}({{mod.inputs[dim.coords[0]].name}});
+  const auto {{dim.name}} = dim<{{dim.coords[1]}}>({{mod.inputs[dim.coords[0]].name}});
   {% endfor %}
   {%- set nrhs_arg = None -%}
   {%- for a in mod.inputs + mod.outputs + mod.extra_outputs -%}
@@ -71,13 +71,9 @@ ffi::Error {{mod.name|capitalize}}Impl(
     {%- elif arg.shape|length == 2 and arg.shape[1] == "J" %}
     Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, J); \
     {%- elif arg.shape|length == 2 and arg.shape[1] == "nrhs" %}
-    if (nrhs == 1) { \
-      Eigen::Map<const Eigen::VectorXd> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, 1); \
-    } else { \
-      Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, nrhs); \
-    } \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, dim<1>({{arg.name}})); \
     {%- else %}
-    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, dim1({{arg.name}})); \
+    Eigen::Map<const Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}.typed_data(), {{arg.shape[0]}}, dim<1>({{arg.name}})); \
     {%- endif %}
     {%- endfor %}
     {%- for arg in mod.outputs %}
@@ -86,11 +82,7 @@ ffi::Error {{mod.name|capitalize}}Impl(
     {%- elif arg.shape|length == 2 and arg.shape[1] == "J" %}
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, SIZE, order<SIZE>::value>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, J); \
     {%- elif arg.shape|length == 2 and arg.shape[1] == "nrhs" %}
-    if (nrhs == 1) { \
-      Eigen::Map<Eigen::VectorXd> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, 1); \
-    } else { \
-      Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, nrhs); \
-    } \
+    Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, {{arg.shape[1]}}); \
     {%- else %}
     Eigen::Map<Eigen::Matrix<double, Eigen::Dynamic, Eigen::Dynamic, Eigen::RowMajor>> {{arg.name}}_({{arg.name}}->typed_data(), {{arg.shape[0]}}, {{arg.shape[1]}}); \
     {%- endif %}
@@ -138,14 +130,14 @@ ffi::Error {{mod.name}}_revImpl(
 {%- endfor %}
 ) {
   {% for dim in mod.dimensions %}
-  const auto {{dim.name}} = dim{{dim.coords[1]}}({{mod.inputs[dim.coords[0]].name}});
+  const auto {{dim.name}} = dim<{{dim.coords[1]}}>({{mod.inputs[dim.coords[0]].name}});
   {% endfor %}
   {# Minimal shape checks #}
   {% for arg in mod.rev_inputs %}
   {%- if arg.shape|length == 1 %}
-  if (dim0({{arg.name}}) != {{arg.shape[0]}}) return shape_error("{{mod.name}}_rev shape mismatch");
+  if (dim<0>({{arg.name}}) != {{arg.shape[0]}}) return ffi::Error::InvalidArgument("{{mod.name}}_rev shape mismatch");
   {%- elif arg.shape|length == 2 %}
-  if (dim0({{arg.name}}) != {{arg.shape[0]}} || dim1({{arg.name}}) != {{arg.shape[1]}}) return shape_error("{{mod.name}}_rev shape mismatch");
+  if (dim<0>({{arg.name}}) != {{arg.shape[0]}} || dim<1>({{arg.name}}) != {{arg.shape[1]}}) return ffi::Error::InvalidArgument("{{mod.name}}_rev shape mismatch");
   {%- endif %}
   {% endfor %}
 
